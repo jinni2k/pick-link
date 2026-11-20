@@ -8,7 +8,7 @@
       "category": "겨울·방한",
       "badge": "자석분리·충전식",
       "price_label": "상세페이지 참조",
-      "affiliate_url": "",
+      "affiliate_url": "https://link.coupang.com/a/iPICMFEEIm",
       "thumbnail": "assets/thumb_001.jpg",
       "keywords": [
         "손난로",
@@ -24,8 +24,11 @@
         "일회용 핫팩과 달리 USB 충전 방식으로 반복 사용 가능",
         "모델별 온도 단계, 보조배터리 출력 및 가격은 상세 페이지에서 확인"
       ],
-      "verified_specs": [],
-      "source_product_url": "",
+      "verified_specs": [
+        "자석 분리형 양면 충전식 손난로 구조 (쿠팡 상품 ID 9118418356)",
+        "쿠팡 파트너스 AF0565547 공식 제휴 링크 연동 및 최신 가격·상세 옵션은 쿠팡 상품 페이지 기준"
+      ],
+      "source_product_url": "https://www.coupang.com/vp/products/9118418356?itemId=26820338740",
       "hands_on_tested": false,
       "voice_profile": "winter_daily"
     }
