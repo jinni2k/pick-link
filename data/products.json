@@ -6,8 +6,8 @@
       "code": "001",
       "title": "자석 분리형 양면 충전식 손난로 보조배터리",
       "category": "겨울·방한",
-      "badge": "3초발열·분리형",
-      "price_label": "2만 원대",
+      "badge": "자석분리·충전식",
+      "price_label": "상세페이지 참조",
       "affiliate_url": "",
       "thumbnail": "assets/thumb_001.jpg",
       "keywords": [
@@ -20,10 +20,14 @@
       ],
       "created_at": "2026-11-20",
       "summary_bullets": [
-        "자석 결합 및 2개 분리 구조로 양손 동시 사용 가능",
-        "전원 3초 양면 고속 발열 및 3단계 LED 온도 표시",
-        "비수기 스마트폰 USB-C 보조배터리 겸용 설계"
-      ]
+        "하나로 합치거나 둘로 분리해 양손에 나눠 쥘 수 있는 자석 분리형 구조",
+        "일회용 핫팩과 달리 USB 충전 방식으로 반복 사용 가능",
+        "모델별 온도 단계, 보조배터리 출력 및 가격은 상세 페이지에서 확인"
+      ],
+      "verified_specs": [],
+      "source_product_url": "",
+      "hands_on_tested": false,
+      "voice_profile": "winter_daily"
     }
   ]
 }

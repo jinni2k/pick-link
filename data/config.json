@@ -2,17 +2,19 @@
   "brand_name": "픽랩",
   "brand_en": "PICKLAB",
   "slogan": "써보면 바로 사는 요즘 핫템 30초 리뷰",
-  "hub_url": "https://jinni2k.github.io/pick-link/",
+  "hub_url": "https://pick-link.pages.dev/",
   "inpock_url": "https://link.inpock.co.kr/inpockhome",
   "business_email": "jinni2k@gmail.com",
   "target_channel_id": "",
   "youtube_channel_url": "",
+  "coupang_partners_id": "AF0565547",
   "ftc_disclosure": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.",
   "categories": [
     "전체",
     "겨울·방한",
     "생활·주방",
     "AI·IT가젯",
-    "데스크·차량"
+    "데스크·차량",
+    "뷰티·패션"
   ]
 }
