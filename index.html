@@ -26,31 +26,24 @@
 
   <main class="shell">
     <header class="profile-card">
-      <div class="hero-cover">
-        <img src="assets/cover_banner.jpg" alt="픽랩 배너" loading="eager" onerror="this.parentElement.classList.add('is-fallback');this.remove()">
-      </div>
-      <div class="profile-avatar-row">
+      <div class="profile-top-row">
         <div class="profile-identity">
           <div class="avatar-ring">
             <img src="assets/profile_avatar.jpg" alt="픽랩 프로필" loading="eager" onerror="this.parentElement.classList.add('is-fallback');this.remove()">
           </div>
           <div class="identity-text">
             <div class="brand-badge">
-              <span class="brand-name">픽랩 셀렉트 숍</span>
+              <span class="brand-name">픽랩</span>
               <span class="brand-en">PICKLAB</span>
             </div>
-            <p class="identity-sub">검증 큐레이션 아카이브</p>
+            <p class="identity-sub">영상 속 번호로 바로 찾는 최저가 아카이브</p>
           </div>
         </div>
         <button id="shareHubBtn" class="share-pill-btn" type="button" aria-label="허브 페이지 공유">공유</button>
       </div>
-      <div class="profile-meta">
-        <h1 class="profile-title">써보면 바로 사는 요즘 핫템 30초 리뷰</h1>
-        <p class="profile-sub">영상 속 제품 번호를 누르면 쿠팡 상세 및 품절 대비 예비 판매처로 바로 이동합니다.</p>
-        <div class="profile-actions">
-          <a class="btn btn-primary" href="https://www.youtube.com/channel/UCCg2V-sSoNhKSNGToI6aEkA" target="_blank" rel="noopener noreferrer">유튜브 채널 보기</a>
-          <button id="openBizModalBtn" class="btn btn-secondary" type="button">비즈니스·협찬 제안</button>
-        </div>
+      <div class="profile-actions">
+        <a class="btn btn-secondary btn-compact" href="https://www.youtube.com/channel/UCCg2V-sSoNhKSNGToI6aEkA" target="_blank" rel="noopener noreferrer">유튜브 채널 보기</a>
+        <button id="openBizModalBtn" class="btn btn-secondary btn-compact" type="button">비즈니스·협찬 제안</button>
       </div>
     </header>
 
@@ -67,13 +60,10 @@
           autocomplete="off"
           aria-label="제품 번호 또는 키워드 검색"
         >
+        <span id="resultCount" class="search-count">1건</span>
         <button id="clearSearch" class="clear-btn" type="button" hidden>지우기</button>
       </div>
-      <div id="categoryChips" class="chips" role="tablist" aria-label="카테고리 필터"></div>
-      <div class="result-meta">
-        <span id="resultCount">등록 상품 0건</span>
-        <span class="sort-note">최신 번호순</span>
-      </div>
+      <div id="categoryChips" class="chips" role="tablist" aria-label="카테고리 필터" hidden></div>
     </section>
 
     <section id="productList" class="product-list" aria-live="polite"></section>

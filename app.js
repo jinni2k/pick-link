@@ -106,7 +106,20 @@
   }
 
   function renderChips() {
-    const categories = config.categories || ["전체"];
+    const uniqueCats = [];
+    for (const it of allItems) {
+      if (it && it.category && !uniqueCats.includes(it.category)) {
+        uniqueCats.push(it.category);
+      }
+    }
+    if (allItems.length < 4 || uniqueCats.length < 2) {
+      activeCategory = "전체";
+      categoryChips.hidden = true;
+      categoryChips.innerHTML = "";
+      return;
+    }
+    const categories = ["전체", ...uniqueCats];
+    categoryChips.hidden = false;
     categoryChips.innerHTML = categories
       .map((cat) => {
         const activeClass = cat === activeCategory ? "chip is-active" : "chip";
@@ -116,13 +129,15 @@
   }
 
   function renderItems() {
-    clearSearchBtn.hidden = !query.trim();
+    const hasQuery = Boolean(query.trim());
+    clearSearchBtn.hidden = !hasQuery;
+    if (resultCount) resultCount.hidden = hasQuery;
     const filtered = allItems
       .filter((item) => activeCategory === "전체" || item.category === activeCategory)
       .filter((item) => matchesQuery(item, query))
       .sort((a, b) => parseInt(b.code, 10) - parseInt(a.code, 10));
 
-    resultCount.textContent = `등록 상품 ${filtered.length}건`;
+    resultCount.textContent = `${filtered.length}건`;
 
     if (!filtered.length) {
       productList.innerHTML =
@@ -240,23 +255,19 @@
           <article class="product-card">
             ${thumbHtml}
             <div class="card-body">
-              <div class="card-tags">
+              <div class="card-title-row">
                 ${item.category ? `<span class="amber-pill">${escapeHtml(item.category)}</span>` : ""}
-                ${item.review_rating ? `<span class="amber-pill">평점 ${escapeHtml(item.review_rating)}</span>` : ""}
+                <h2 class="card-title">${titleHtml}</h2>
               </div>
-              <h2 class="card-title">${titleHtml}</h2>
-              ${specChipsHtml}
               <div class="primary-cta-stack">
                 ${cta}
                 ${backupCtaHtml}
                 ${backupNoteHtml}
                 ${inAppHtml}
               </div>
-              <div class="direct-link-line">${escapeHtml(directUrl.replace(/^https?:\/\//, ""))}</div>
               <div class="card-foot">
-                <span class="price-label">${escapeHtml(item.price_label || "")}</span>
+                ${detailToggleBtn}
                 <div class="card-actions">
-                  ${detailToggleBtn}
                   <button type="button" class="share-btn" data-share-code="${escapeHtml(item.code)}">공유</button>
                   <button type="button" class="copy-url-btn" data-copy-url="${escapeHtml(directUrl)}">주소 복사</button>
                 </div>
