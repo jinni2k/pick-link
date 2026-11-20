@@ -96,26 +96,89 @@
       .map((item) => {
         const url = String(item.affiliate_url || "").trim();
         const isLiveCoupang = url.startsWith("https://link.coupang.com/");
+        const hubBase = (
+          window.location.origin && window.location.origin !== "null"
+            ? window.location.origin
+            : config.hub_url || "https://pick-link.pages.dev"
+        ).replace(/\/$/, "");
+        const directUrl = `${hubBase}/?q=${encodeURIComponent(item.code)}`;
         const cta = isLiveCoupang
-          ? `<a class="cta-btn" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer sponsored">쿠팡 최저가 보기</a>`
+          ? `<a class="cta-btn" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer sponsored">쿠팡 바로가기</a>`
           : `<span class="cta-btn is-pending">제휴 링크 연동 준비 중</span>`;
         const thumbSrc = escapeHtml(item.thumbnail || "");
+        const thumbHtml = isLiveCoupang
+          ? `<a class="thumb-wrap" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer sponsored" aria-label="${escapeHtml(item.title)} 바로가기">
+               <img src="${thumbSrc || FALLBACK_SVG}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='${FALLBACK_SVG}'">
+             </a>`
+          : `<div class="thumb-wrap">
+               <img src="${thumbSrc || FALLBACK_SVG}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='${FALLBACK_SVG}'">
+             </div>`;
+        const titleHtml = isLiveCoupang
+          ? `<a class="card-title-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer sponsored">${escapeHtml(item.title)}</a>`
+          : escapeHtml(item.title);
+        const specs = []
+          .concat(item.verified_specs || [], item.detail_highlights || [])
+          .filter((v, i, arr) => v && arr.indexOf(v) === i);
+        const recFor = item.recommended_for || [];
+        const pros = item.review_pros || [];
+        const cons = item.review_cons || [];
+        const hasDetail = Boolean(specs.length || recFor.length || pros.length || cons.length || item.review_rating);
+        const isAutoOpen = hasDetail && Boolean(query.trim());
+        const detailSections = [];
+        if (item.review_rating) {
+          detailSections.push(
+            `<div class="review-badge-row"><span class="code-pill">상품평 ${escapeHtml(item.review_rating)}점</span>` +
+              (item.review_count ? `<span class="badge-pill">${escapeHtml(item.review_count)}개 후기 확인</span>` : "") +
+              `</div>`
+          );
+        }
+        if (specs.length) {
+          detailSections.push(
+            `<div class="detail-section"><h3>주요 특징 및 상세 스펙</h3><ul class="detail-list">` +
+              specs.map((s) => `<li>${escapeHtml(s)}</li>`).join("") +
+              `</ul></div>`
+          );
+        }
+        if (recFor.length) {
+          detailSections.push(
+            `<div class="detail-section"><h3>추천 대상</h3><ul class="detail-list">` +
+              recFor.map((r) => `<li>${escapeHtml(r)}</li>`).join("") +
+              `</ul></div>`
+          );
+        }
+        if (pros.length || cons.length) {
+          detailSections.push(
+            `<div class="detail-section"><h3>상품평·구매 전 체크포인트</h3><ul class="detail-list">` +
+              pros.concat(cons).map((p) => `<li>${escapeHtml(p)}</li>`).join("") +
+              `</ul></div>`
+          );
+        }
+        const detailToggleBtn = hasDetail
+          ? `<button type="button" class="detail-toggle-btn" data-toggle-detail="${escapeHtml(item.code)}" aria-expanded="${isAutoOpen ? "true" : "false"}">${isAutoOpen ? "상세 설명 접기" : "상세 설명 보기"}</button>`
+          : "";
+        const detailPanelHtml = hasDetail
+          ? `<div id="detail-${escapeHtml(item.code)}" class="detail-panel"${isAutoOpen ? "" : " hidden"}>${detailSections.join("")}</div>`
+          : "";
         return `
           <article class="product-card">
-            <div class="thumb-wrap">
-              <img src="${thumbSrc || FALLBACK_SVG}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='${FALLBACK_SVG}'">
-            </div>
+            ${thumbHtml}
             <div class="card-body">
               <div class="card-tags">
                 <span class="code-pill">[${escapeHtml(item.code)}]</span>
                 ${item.badge ? `<span class="badge-pill">${escapeHtml(item.badge)}</span>` : ""}
               </div>
-              <h2 class="card-title">${escapeHtml(item.title)}</h2>
+              <h2 class="card-title">${titleHtml}</h2>
+              <div class="direct-link-line">${escapeHtml(directUrl.replace(/^https?:\/\//, ""))}</div>
               <div class="card-foot">
                 <span class="price-label">${escapeHtml(item.price_label || "")}</span>
-                ${cta}
+                <div class="card-actions">
+                  ${detailToggleBtn}
+                  <button type="button" class="copy-url-btn" data-copy-url="${escapeHtml(directUrl)}">주소 복사</button>
+                  ${cta}
+                </div>
               </div>
             </div>
+            ${detailPanelHtml}
           </article>
         `;
       })
@@ -200,6 +263,31 @@
       showToast("링크 허브 주소를 복사했습니다.");
     } catch (_) {
       showToast(shareUrl);
+    }
+  });
+
+  productList.addEventListener("click", async (e) => {
+    const toggleBtn = e.target.closest("[data-toggle-detail]");
+    if (toggleBtn) {
+      const code = toggleBtn.getAttribute("data-toggle-detail") || "";
+      const panel = document.getElementById(`detail-${code}`);
+      if (panel) {
+        const willOpen = panel.hidden;
+        panel.hidden = !willOpen;
+        toggleBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        toggleBtn.textContent = willOpen ? "상세 설명 접기" : "상세 설명 보기";
+      }
+      return;
+    }
+    const btn = e.target.closest("[data-copy-url]");
+    if (!btn) return;
+    const copyUrl = btn.getAttribute("data-copy-url") || "";
+    if (!copyUrl) return;
+    try {
+      await navigator.clipboard.writeText(copyUrl);
+      showToast("상품 바로가기 주소를 복사했습니다.");
+    } catch (_) {
+      showToast(copyUrl);
     }
   });
 
