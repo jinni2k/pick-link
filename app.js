@@ -22,12 +22,27 @@
   const bizForm = document.getElementById("bizForm");
   const copyEmailBtn = document.getElementById("copyEmailBtn");
   const shareHubBtn = document.getElementById("shareHubBtn");
+  const goRedirectBanner = document.getElementById("goRedirectBanner");
+  const shareModal = document.getElementById("shareModal");
+  const closeShareModalBtn = document.getElementById("closeShareModalBtn");
+  const shareTargetTitle = document.getElementById("shareTargetTitle");
+  const copyDetailLinkBtn = document.getElementById("copyDetailLinkBtn");
+  const copyGoLinkBtn = document.getElementById("copyGoLinkBtn");
+  const copyShareCaptionBtn = document.getElementById("copyShareCaptionBtn");
+  const shareXBtn = document.getElementById("shareXBtn");
+  const shareFbBtn = document.getElementById("shareFbBtn");
+  const shareNaverBtn = document.getElementById("shareNaverBtn");
+  const shareBandBtn = document.getElementById("shareBandBtn");
   const toastEl = document.getElementById("toast");
 
   let config = readBootstrap("bootstrapConfig", {});
   let allItems = (readBootstrap("bootstrapProducts", {}).items || []).slice();
   let activeCategory = "전체";
-  let query = new URLSearchParams(window.location.search).get("q") || "";
+  const urlParams = new URLSearchParams(window.location.search);
+  const goCode = (urlParams.get("go") || "").trim();
+  let query = urlParams.get("q") || goCode || "";
+  let currentSharePack = null;
+  let goTimer = null;
 
   function readBootstrap(id, fallback) {
     try {
@@ -174,6 +189,7 @@
                 <span class="price-label">${escapeHtml(item.price_label || "")}</span>
                 <div class="card-actions">
                   ${detailToggleBtn}
+                  <button type="button" class="share-btn" data-share-code="${escapeHtml(item.code)}">공유</button>
                   <button type="button" class="copy-url-btn" data-copy-url="${escapeHtml(directUrl)}">주소 복사</button>
                   ${cta}
                 </div>
@@ -257,17 +273,171 @@
     }
   });
 
-  shareHubBtn.addEventListener("click", async () => {
-    const shareUrl = window.location.href;
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      showToast("링크 허브 주소를 복사했습니다.");
-    } catch (_) {
-      showToast(shareUrl);
+  function getHubBase() {
+    return (
+      window.location.origin && window.location.origin !== "null"
+        ? window.location.origin
+        : config.hub_url || "https://pick-link.pages.dev"
+    ).replace(/\/$/, "");
+  }
+
+  function buildSharePack(item) {
+    const hubBase = getHubBase();
+    if (!item) {
+      const title = `${config.brand_name || "픽랩"} ${config.brand_en || "PICKLAB"} 추천 제품 모음`;
+      const caption = `${title}\n${config.slogan || ""}\n${hubBase}\n${config.ftc_disclosure || ""}`;
+      return {
+        title,
+        detailUrl: hubBase,
+        goUrl: hubBase,
+        caption,
+      };
     }
+    const detailUrl = `${hubBase}/?q=${encodeURIComponent(item.code)}`;
+    const goUrl = `${hubBase}/?go=${encodeURIComponent(item.code)}`;
+    const specs = (item.verified_specs || item.summary_bullets || []).slice(0, 2);
+    const caption = [
+      `[${item.code}] ${item.title}`,
+      ...specs.map((s) => `- ${s}`),
+      `자세히 보기 ${detailUrl}`,
+      config.ftc_disclosure || "",
+    ].filter(Boolean).join("\n");
+    return {
+      title: `[${item.code}] ${item.title}`,
+      detailUrl,
+      goUrl,
+      caption,
+    };
+  }
+
+  function showShareFallbackModal(pack) {
+    currentSharePack = pack;
+    if (shareTargetTitle) shareTargetTitle.textContent = pack.title;
+    if (shareXBtn) {
+      shareXBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(pack.title)}&url=${encodeURIComponent(pack.detailUrl)}`;
+    }
+    if (shareFbBtn) {
+      shareFbBtn.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pack.detailUrl)}`;
+    }
+    if (shareNaverBtn) {
+      shareNaverBtn.href = `https://share.naver.com/web/shareView?url=${encodeURIComponent(pack.detailUrl)}&title=${encodeURIComponent(pack.title)}`;
+    }
+    if (shareBandBtn) {
+      shareBandBtn.href = `https://band.us/plugin/share?body=${encodeURIComponent(pack.title + "\n" + pack.detailUrl)}&route=${encodeURIComponent(getHubBase())}`;
+    }
+    if (shareModal) shareModal.hidden = false;
+  }
+
+  async function triggerShare(item) {
+    const pack = buildSharePack(item);
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: pack.title, text: pack.caption, url: pack.detailUrl });
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+      }
+    }
+    showShareFallbackModal(pack);
+  }
+
+  function initGoRedirect(rawCode) {
+    if (!rawCode || !goRedirectBanner) return;
+    const targetNum = /^\d+$/.test(rawCode) ? String(parseInt(rawCode, 10)) : "";
+    const match = allItems.find((it) => {
+      const codeNum = String(parseInt(it.code, 10));
+      return it.code === rawCode || (targetNum && codeNum === targetNum);
+    });
+    if (!match) return;
+    const url = String(match.affiliate_url || "").trim();
+    if (!url.startsWith("https://link.coupang.com/")) {
+      goRedirectBanner.innerHTML =
+        `<p class="go-banner-title">[${escapeHtml(match.code)}] ${escapeHtml(match.title)}</p>` +
+        `<p class="go-banner-sub">현재 제휴 링크를 교체 또는 확인 중입니다. 아래 상품 상세 카드를 확인해 주세요.</p>`;
+      goRedirectBanner.hidden = false;
+      return;
+    }
+    goRedirectBanner.innerHTML =
+      `<p class="go-banner-title">[${escapeHtml(match.code)}] 쿠팡 공식 파트너스 상품으로 즉시 연결합니다</p>` +
+      `<p class="go-banner-sub">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>` +
+      `<div class="go-banner-actions">` +
+        `<a class="btn btn-primary" href="${escapeHtml(url)}" rel="noopener noreferrer sponsored">지금 바로 이동</a>` +
+        `<button id="cancelGoBtn" type="button" class="btn btn-secondary">자동 이동 취소</button>` +
+      `</div>`;
+    goRedirectBanner.hidden = false;
+    const cancelBtn = document.getElementById("cancelGoBtn");
+    goTimer = setTimeout(() => {
+      window.location.href = url;
+    }, 1200);
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", () => {
+        if (goTimer) {
+          clearTimeout(goTimer);
+          goTimer = null;
+        }
+        const sub = goRedirectBanner.querySelector(".go-banner-sub");
+        if (sub) sub.textContent = "자동 이동을 취소했습니다. 아래 카드 또는 위 버튼을 눌러 직접 이동할 수 있습니다.";
+      });
+    }
+  }
+
+  shareHubBtn.addEventListener("click", () => {
+    void triggerShare(null);
   });
 
+  if (closeShareModalBtn && shareModal) {
+    closeShareModalBtn.addEventListener("click", () => {
+      shareModal.hidden = true;
+    });
+    shareModal.addEventListener("click", (e) => {
+      if (e.target === shareModal) shareModal.hidden = true;
+    });
+  }
+
+  if (copyDetailLinkBtn) {
+    copyDetailLinkBtn.addEventListener("click", async () => {
+      if (!currentSharePack) return;
+      try {
+        await navigator.clipboard.writeText(currentSharePack.detailUrl);
+        showToast("상품 상세 직링크를 복사했습니다.");
+      } catch (_) {
+        showToast(currentSharePack.detailUrl);
+      }
+    });
+  }
+
+  if (copyGoLinkBtn) {
+    copyGoLinkBtn.addEventListener("click", async () => {
+      if (!currentSharePack) return;
+      try {
+        await navigator.clipboard.writeText(currentSharePack.goUrl);
+        showToast("쿠팡 즉시 이동 링크를 복사했습니다.");
+      } catch (_) {
+        showToast(currentSharePack.goUrl);
+      }
+    });
+  }
+
+  if (copyShareCaptionBtn) {
+    copyShareCaptionBtn.addEventListener("click", async () => {
+      if (!currentSharePack) return;
+      try {
+        await navigator.clipboard.writeText(currentSharePack.caption);
+        showToast("공유 문구와 직링크를 복사했습니다.");
+      } catch (_) {
+        showToast("복사 권한을 확인해 주세요.");
+      }
+    });
+  }
+
   productList.addEventListener("click", async (e) => {
+    const shareBtn = e.target.closest("[data-share-code]");
+    if (shareBtn) {
+      const code = shareBtn.getAttribute("data-share-code") || "";
+      const target = allItems.find((it) => it.code === code) || null;
+      void triggerShare(target);
+      return;
+    }
     const toggleBtn = e.target.closest("[data-toggle-detail]");
     if (toggleBtn) {
       const code = toggleBtn.getAttribute("data-toggle-detail") || "";
@@ -294,5 +464,6 @@
 
   renderChips();
   renderItems();
+  initGoRedirect(goCode);
   refreshRemoteCatalog();
 })();

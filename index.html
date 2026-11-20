@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>픽랩 PICKLAB | 추천 제품 링크</title>
   <meta name="description" content="써보면 바로 사는 요즘 핫템 30초 리뷰">
+  <meta property="og:title" content="픽랩 PICKLAB | 추천 제품 링크">
+  <meta property="og:description" content="써보면 바로 사는 요즘 핫템 30초 리뷰">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pick-link.pages.dev/">
+  <meta property="og:image" content="https://pick-link.pages.dev/assets/cover_banner.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link rel="stylesheet" href="styles.css">
@@ -44,6 +50,8 @@
         </div>
       </div>
     </header>
+
+    <section id="goRedirectBanner" class="go-banner" hidden aria-live="polite"></section>
 
     <section class="controls" aria-label="상품 검색 및 분류">
       <div class="search-wrap">
@@ -107,6 +115,27 @@
         </div>
       </form>
       <p class="modal-email-note">수신 메일 주소 <strong id="bizEmailDisplay">jinni2k@gmail.com</strong></p>
+    </div>
+  </div>
+
+  <div id="shareModal" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2 id="shareModalTitle">직링크 및 공유</h2>
+        <button id="closeShareModalBtn" class="icon-btn" type="button" aria-label="닫기">닫기</button>
+      </div>
+      <p id="shareTargetTitle" class="modal-desc"></p>
+      <div class="share-grid">
+        <button id="copyDetailLinkBtn" type="button" class="btn btn-primary">상품 상세 직링크 복사</button>
+        <button id="copyGoLinkBtn" type="button" class="btn btn-secondary">쿠팡 즉시 이동 링크 복사</button>
+        <button id="copyShareCaptionBtn" type="button" class="btn btn-secondary">공유 문구+링크 복사</button>
+        <div class="share-social-row">
+          <a id="shareXBtn" class="icon-btn" href="#" target="_blank" rel="noopener noreferrer">X 공유</a>
+          <a id="shareFbBtn" class="icon-btn" href="#" target="_blank" rel="noopener noreferrer">페이스북 공유</a>
+          <a id="shareNaverBtn" class="icon-btn" href="#" target="_blank" rel="noopener noreferrer">네이버 블로그</a>
+          <a id="shareBandBtn" class="icon-btn" href="#" target="_blank" rel="noopener noreferrer">밴드 공유</a>
+        </div>
+      </div>
     </div>
   </div>
 

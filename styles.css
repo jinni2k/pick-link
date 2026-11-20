@@ -691,3 +691,65 @@ body {
   font-size: 13px;
   font-weight: 600;
 }
+
+.go-banner {
+  margin: 0 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #eff6ff;
+  border: 1.5px solid #93c5fd;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.go-banner[hidden] {
+  display: none;
+}
+
+.go-banner-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e3a8a;
+}
+
+.go-banner-sub {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.go-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.share-btn {
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.share-btn:hover {
+  background: #dbeafe;
+}
+
+.share-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.share-social-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
