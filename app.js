@@ -166,6 +166,7 @@
               <div class="card-tags">
                 <span class="code-pill">[${escapeHtml(item.code)}]</span>
                 ${item.badge ? `<span class="badge-pill">${escapeHtml(item.badge)}</span>` : ""}
+                ${item.review_rating ? `<span class="amber-pill">평점 ${escapeHtml(item.review_rating)}</span>` : ""}
               </div>
               <h2 class="card-title">${titleHtml}</h2>
               <div class="direct-link-line">${escapeHtml(directUrl.replace(/^https?:\/\//, ""))}</div>

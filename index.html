@@ -20,20 +20,28 @@
 
   <main class="shell">
     <header class="profile-card">
-      <div class="profile-top">
+      <div class="hero-cover">
+        <img src="assets/cover_banner.jpg" alt="픽랩 배너" loading="eager" onerror="this.parentElement.classList.add('is-fallback');this.remove()">
+      </div>
+      <div class="profile-avatar-row">
+        <div class="avatar-ring">
+          <img src="assets/profile_avatar.jpg" alt="픽랩 프로필" loading="eager" onerror="this.parentElement.classList.add('is-fallback');this.remove()">
+        </div>
+        <button id="shareHubBtn" class="icon-btn" type="button" aria-label="페이지 링크 복사">링크 복사</button>
+      </div>
+      <div class="profile-meta">
         <div class="brand-badge">
           <span class="live-dot" aria-hidden="true"></span>
           <span class="live-label">ON AIR</span>
           <span class="brand-name">픽랩</span>
           <span class="brand-en">PICKLAB</span>
         </div>
-        <button id="shareHubBtn" class="icon-btn" type="button" aria-label="페이지 링크 복사">링크 복사</button>
-      </div>
-      <h1 class="profile-title">써보면 바로 사는 요즘 핫템 30초 리뷰</h1>
-      <p class="profile-sub">영상 속 제품 번호를 검색하면 쿠팡 최저가 페이지로 바로 연결됩니다.</p>
-      <div class="profile-actions">
-        <a class="btn btn-primary" href="https://www.youtube.com/channel/UCCg2V-sSoNhKSNGToI6aEkA" target="_blank" rel="noopener noreferrer">유튜브 채널 보기</a>
-        <button id="openBizModalBtn" class="btn btn-secondary" type="button">비즈니스·협찬 제안</button>
+        <h1 class="profile-title">써보면 바로 사는 요즘 핫템 30초 리뷰</h1>
+        <p class="profile-sub">영상 속 제품 번호를 검색하면 검증된 쿠팡 상품 페이지로 바로 이동합니다.</p>
+        <div class="profile-actions">
+          <a class="btn btn-primary" href="https://www.youtube.com/channel/UCCg2V-sSoNhKSNGToI6aEkA" target="_blank" rel="noopener noreferrer">유튜브 채널 보기</a>
+          <button id="openBizModalBtn" class="btn btn-secondary" type="button">비즈니스·협찬 제안</button>
+        </div>
       </div>
     </header>
 
