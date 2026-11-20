@@ -147,9 +147,9 @@
 
         const itemBackups = findBackupsForCode(item.code);
         const readyBackup = itemBackups.find(
-          (b) => b.status === "ready" && String(b.affiliateUrl || "").startsWith("https://link.coupang.com/")
+          (b) => b.status === "ready" && String(b.affiliateUrl || "").startsWith("https://link.coupang.com/") && b.affiliateUrl !== url
         );
-        const standbyBackup = itemBackups.find((b) => Boolean(b.sourceProductUrl));
+        const standbyBackup = itemBackups.find((b) => b.status === "needs_shortlink" && Boolean(b.sourceProductUrl));
         let backupCtaHtml = "";
         let backupNoteHtml = "";
         if (readyBackup) {
