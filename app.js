@@ -37,12 +37,35 @@
 
   let config = readBootstrap("bootstrapConfig", {});
   let allItems = (readBootstrap("bootstrapProducts", {}).items || []).slice();
+  let backupEntries = (readBootstrap("bootstrapBackups", {}).entries || []).slice();
   let activeCategory = "전체";
   const urlParams = new URLSearchParams(window.location.search);
   const goCode = (urlParams.get("go") || "").trim();
   let query = urlParams.get("q") || goCode || "";
   let currentSharePack = null;
   let goTimer = null;
+
+  const userAgentStr = navigator.userAgent || "";
+  const isMobileUa = /Android|iPhone|iPad|iPod|Mobile/i.test(userAgentStr);
+  const isAndroidUa = /Android/i.test(userAgentStr);
+  const isInAppUa = /YouTube|Instagram|KAKAOTALK|NAVER|FBAN|FBAV|Line|TikTok|musical_ly|BytedanceWebview/i.test(userAgentStr);
+
+  function coupangLinkAttrs() {
+    return isMobileUa
+      ? 'target="_self" rel="sponsored"'
+      : 'target="_blank" rel="noopener noreferrer sponsored"';
+  }
+
+  function findBackupsForCode(code) {
+    return backupEntries
+      .filter((entry) => entry && String(entry.code) === String(code))
+      .sort((a, b) => (Number(a.priority || 99) - Number(b.priority || 99)));
+  }
+
+  function buildChromeIntentUrl(targetUrl) {
+    const stripped = String(targetUrl || "").replace(/^https?:\/\//i, "");
+    return `intent://${stripped}#Intent;scheme=https;package=com.android.chrome;end`;
+  }
 
   function readBootstrap(id, fallback) {
     try {
@@ -117,19 +140,54 @@
             : config.hub_url || "https://pick-link.pages.dev"
         ).replace(/\/$/, "");
         const directUrl = `${hubBase}/?q=${encodeURIComponent(item.code)}`;
+        const linkAttrs = coupangLinkAttrs();
         const cta = isLiveCoupang
-          ? `<a class="cta-btn" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer sponsored">쿠팡 바로가기</a>`
+          ? `<a class="cta-btn" href="${escapeHtml(url)}" ${linkAttrs}>쿠팡에서 최저가·재고 바로 보기</a>`
           : `<span class="cta-btn is-pending">제휴 링크 연동 준비 중</span>`;
+
+        const itemBackups = findBackupsForCode(item.code);
+        const readyBackup = itemBackups.find(
+          (b) => b.status === "ready" && String(b.affiliateUrl || "").startsWith("https://link.coupang.com/")
+        );
+        const standbyBackup = itemBackups.find((b) => Boolean(b.sourceProductUrl));
+        let backupCtaHtml = "";
+        let backupNoteHtml = "";
+        if (readyBackup) {
+          backupCtaHtml = `<a class="backup-cta-btn" href="${escapeHtml(readyBackup.affiliateUrl)}" ${linkAttrs}>품절 시 동일 제품 예비 판매처 보기</a>`;
+        } else if (standbyBackup) {
+          const prodMatch = String(standbyBackup.sourceProductUrl || "").match(/\/products\/(\d+)/);
+          const pidText = prodMatch ? `상품번호 ${prodMatch[1]}` : "동일 품목 판매처";
+          backupCtaHtml = `<button type="button" class="backup-cta-btn is-standby" data-backup-info="${escapeHtml(item.code)}">품절 시 동일 제품 예비 판매처 보기</button>`;
+          backupNoteHtml =
+            `<div id="backup-note-${escapeHtml(item.code)}" class="backup-standby-note" hidden>` +
+              `<strong>예비 판매처 대기 중 (${escapeHtml(pidText)})</strong><br>` +
+              `${escapeHtml(standbyBackup.title || item.title)} · 파트너스 단축 URL 등록 즉시 자동 연결됩니다.` +
+            `</div>`;
+        }
+
+        const inAppHtml = isInAppUa
+          ? `<div class="inapp-notice"><span>인앱 브라우저에서 상품 화면이 안 열리면 외부 브라우저(Chrome·Safari)로 열어 주세요.</span>` +
+              (isAndroidUa ? `<a class="inapp-ext-link" href="${escapeHtml(buildChromeIntentUrl(directUrl))}">Chrome으로 열기</a>` : "") +
+            `</div>`
+          : "";
+
         const thumbSrc = escapeHtml(item.thumbnail || "");
+        const overlayBadges =
+          `<div class="thumb-overlay-top">` +
+            `<span class="code-pill">NO. ${escapeHtml(item.code)}</span>` +
+            (item.badge ? `<span class="badge-pill">${escapeHtml(item.badge)}</span>` : "") +
+          `</div>`;
         const thumbHtml = isLiveCoupang
-          ? `<a class="thumb-wrap" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer sponsored" aria-label="${escapeHtml(item.title)} 바로가기">
+          ? `<a class="hero-thumb-link" href="${escapeHtml(url)}" ${linkAttrs} aria-label="${escapeHtml(item.title)} 바로가기">
                <img src="${thumbSrc || FALLBACK_SVG}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='${FALLBACK_SVG}'">
+               ${overlayBadges}
              </a>`
-          : `<div class="thumb-wrap">
+          : `<div class="hero-thumb-link">
                <img src="${thumbSrc || FALLBACK_SVG}" alt="${escapeHtml(item.title)}" loading="lazy" onerror="this.src='${FALLBACK_SVG}'">
+               ${overlayBadges}
              </div>`;
         const titleHtml = isLiveCoupang
-          ? `<a class="card-title-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer sponsored">${escapeHtml(item.title)}</a>`
+          ? `<a class="card-title-link" href="${escapeHtml(url)}" ${linkAttrs}>${escapeHtml(item.title)}</a>`
           : escapeHtml(item.title);
         const specs = []
           .concat(item.verified_specs || [], item.detail_highlights || [])
@@ -139,6 +197,10 @@
         const cons = item.review_cons || [];
         const hasDetail = Boolean(specs.length || recFor.length || pros.length || cons.length || item.review_rating);
         const isAutoOpen = hasDetail && Boolean(query.trim());
+        const chipList = (item.keywords || []).slice(0, 3);
+        const specChipsHtml = chipList.length
+          ? `<div class="spec-chip-row">${chipList.map((k) => `<span class="spec-chip">${escapeHtml(k)}</span>`).join("")}</div>`
+          : "";
         const detailSections = [];
         if (item.review_rating) {
           detailSections.push(
@@ -179,11 +241,17 @@
             ${thumbHtml}
             <div class="card-body">
               <div class="card-tags">
-                <span class="code-pill">[${escapeHtml(item.code)}]</span>
-                ${item.badge ? `<span class="badge-pill">${escapeHtml(item.badge)}</span>` : ""}
+                ${item.category ? `<span class="amber-pill">${escapeHtml(item.category)}</span>` : ""}
                 ${item.review_rating ? `<span class="amber-pill">평점 ${escapeHtml(item.review_rating)}</span>` : ""}
               </div>
               <h2 class="card-title">${titleHtml}</h2>
+              ${specChipsHtml}
+              <div class="primary-cta-stack">
+                ${cta}
+                ${backupCtaHtml}
+                ${backupNoteHtml}
+                ${inAppHtml}
+              </div>
               <div class="direct-link-line">${escapeHtml(directUrl.replace(/^https?:\/\//, ""))}</div>
               <div class="card-foot">
                 <span class="price-label">${escapeHtml(item.price_label || "")}</span>
@@ -191,7 +259,6 @@
                   ${detailToggleBtn}
                   <button type="button" class="share-btn" data-share-code="${escapeHtml(item.code)}">공유</button>
                   <button type="button" class="copy-url-btn" data-copy-url="${escapeHtml(directUrl)}">주소 복사</button>
-                  ${cta}
                 </div>
               </div>
             </div>
@@ -204,9 +271,18 @@
 
   async function refreshRemoteCatalog() {
     try {
-      const resp = await fetch("data/products.json", { cache: "no-store" });
-      if (resp.ok) {
-        const payload = await resp.json();
+      const [respProd, respBack] = await Promise.all([
+        fetch("data/products.json", { cache: "no-store" }),
+        fetch("data/backup_links.json", { cache: "no-store" }).catch(() => null),
+      ]);
+      if (respBack && respBack.ok) {
+        const bPayload = await respBack.json();
+        if (Array.isArray(bPayload.entries)) {
+          backupEntries = bPayload.entries;
+        }
+      }
+      if (respProd.ok) {
+        const payload = await respProd.json();
         if (Array.isArray(payload.items)) {
           allItems = payload.items;
           renderItems();
@@ -357,13 +433,17 @@
       goRedirectBanner.hidden = false;
       return;
     }
+    const goLinksHtml =
+      `<a class="btn btn-primary" href="${escapeHtml(url)}" ${coupangLinkAttrs()}>지금 바로 이동</a>` +
+      `<button id="cancelGoBtn" type="button" class="btn btn-secondary">자동 이동 취소</button>`;
+    const inAppGoNote = isInAppUa
+      ? `<p class="go-banner-sub">인앱 브라우저에서 앱 연결이 멈추면 외부 브라우저(Chrome·Safari)에서 열어 주세요.</p>`
+      : "";
     goRedirectBanner.innerHTML =
       `<p class="go-banner-title">[${escapeHtml(match.code)}] 쿠팡 공식 파트너스 상품으로 즉시 연결합니다</p>` +
       `<p class="go-banner-sub">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>` +
-      `<div class="go-banner-actions">` +
-        `<a class="btn btn-primary" href="${escapeHtml(url)}" rel="noopener noreferrer sponsored">지금 바로 이동</a>` +
-        `<button id="cancelGoBtn" type="button" class="btn btn-secondary">자동 이동 취소</button>` +
-      `</div>`;
+      inAppGoNote +
+      `<div class="go-banner-actions">${goLinksHtml}</div>`;
     goRedirectBanner.hidden = false;
     const cancelBtn = document.getElementById("cancelGoBtn");
     goTimer = setTimeout(() => {
@@ -431,6 +511,17 @@
   }
 
   productList.addEventListener("click", async (e) => {
+    const backupBtn = e.target.closest("[data-backup-info]");
+    if (backupBtn) {
+      const code = backupBtn.getAttribute("data-backup-info") || "";
+      const note = document.getElementById(`backup-note-${code}`);
+      if (note) note.hidden = !note.hidden;
+      const panel = document.getElementById(`detail-${code}`);
+      if (panel && panel.hidden) {
+        panel.hidden = false;
+      }
+      return;
+    }
     const shareBtn = e.target.closest("[data-share-code]");
     if (shareBtn) {
       const code = shareBtn.getAttribute("data-share-code") || "";
