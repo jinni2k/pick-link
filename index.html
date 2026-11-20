@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>픽랩 PICKLAB | 추천 제품 링크</title>
+  <meta name="description" content="써보면 바로 사는 요즘 핫템 30초 리뷰">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ftc-ticker" role="note" aria-label="제휴 마케팅 안내">
+    <div class="ftc-track">
+      <span>이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</span>
+      <span aria-hidden="true">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</span>
+      <span aria-hidden="true">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</span>
+    </div>
+  </div>
+
+  <main class="shell">
+    <header class="profile-card">
+      <div class="profile-top">
+        <div class="brand-badge">
+          <span class="live-dot" aria-hidden="true"></span>
+          <span class="live-label">ON AIR</span>
+          <span class="brand-name">픽랩</span>
+          <span class="brand-en">PICKLAB</span>
+        </div>
+        <button id="shareHubBtn" class="icon-btn" type="button" aria-label="페이지 링크 복사">링크 복사</button>
+      </div>
+      <h1 class="profile-title">써보면 바로 사는 요즘 핫템 30초 리뷰</h1>
+      <p class="profile-sub">영상 속 제품 번호를 검색하면 쿠팡 최저가 페이지로 바로 연결됩니다.</p>
+      <div class="profile-actions">
+        <span class="btn btn-secondary">유튜브 채널 연동 중</span>
+        <button id="openBizModalBtn" class="btn btn-secondary" type="button">비즈니스·협찬 제안</button>
+      </div>
+    </header>
+
+    <section class="controls" aria-label="상품 검색 및 분류">
+      <div class="search-wrap">
+        <input
+          id="searchInput"
+          class="search-input"
+          type="search"
+          inputmode="search"
+          placeholder="제품 번호(예 001) 또는 키워드 입력"
+          autocomplete="off"
+          aria-label="제품 번호 또는 키워드 검색"
+        >
+        <button id="clearSearch" class="clear-btn" type="button" hidden>지우기</button>
+      </div>
+      <div id="categoryChips" class="chips" role="tablist" aria-label="카테고리 필터"></div>
+      <div class="result-meta">
+        <span id="resultCount">등록 상품 0건</span>
+        <span class="sort-note">최신 번호순</span>
+      </div>
+    </section>
+
+    <section id="productList" class="product-list" aria-live="polite"></section>
+
+    <footer class="hub-footer">
+      <p class="ftc-static">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>
+      <p class="copyright">픽랩 (PICKLAB) · 문의 jinni2k@gmail.com</p>
+    </footer>
+  </main>
+
+  <div id="businessModal" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="bizModalTitle">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h2 id="bizModalTitle">비즈니스·협찬 제안</h2>
+        <button id="closeBizModalBtn" class="icon-btn" type="button" aria-label="닫기">닫기</button>
+      </div>
+      <p class="modal-desc">광고, 공동구매, 제품 협찬 문의를 작성한 뒤 메일 앱으로 전송하거나 담당자 이메일을 복사해 전달해 주세요.</p>
+      <form id="bizForm" class="biz-form">
+        <label class="field">
+          <span>제안 유형</span>
+          <select id="bizType">
+            <option value="광고·브랜디드 쇼츠">광고·브랜디드 쇼츠</option>
+            <option value="공동구매">공동구매</option>
+            <option value="제품 협찬">제품 협찬</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>브랜드·담당자명</span>
+          <input id="bizSender" type="text" placeholder="회사명 또는 담당자명" required>
+        </label>
+        <label class="field">
+          <span>제안 상품명 또는 URL</span>
+          <input id="bizProduct" type="text" placeholder="상품명 또는 링크 입력" required>
+        </label>
+        <label class="field">
+          <span>제안 내용</span>
+          <textarea id="bizMessage" rows="3" placeholder="희망 일정과 진행 조건을 적어 주세요."></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">메일 앱으로 보내기</button>
+          <button id="copyEmailBtn" type="button" class="btn btn-secondary">이메일 주소 복사</button>
+        </div>
+      </form>
+      <p class="modal-email-note">수신 메일 주소 <strong id="bizEmailDisplay">jinni2k@gmail.com</strong></p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+
+  <script id="bootstrapConfig" type="application/json">{"brand_name": "픽랩", "brand_en": "PICKLAB", "slogan": "써보면 바로 사는 요즘 핫템 30초 리뷰", "hub_url": "https://jinni2k.github.io/pick-link/", "inpock_url": "https://link.inpock.co.kr/inpockhome", "business_email": "jinni2k@gmail.com", "target_channel_id": "", "youtube_channel_url": "", "ftc_disclosure": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.", "categories": ["전체", "겨울·방한", "생활·주방", "AI·IT가젯", "데스크·차량"]}</script>
+  <script id="bootstrapProducts" type="application/json">{"schema_version": 1, "ftc_disclosure": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.", "items": [{"code": "001", "title": "자석 분리형 양면 충전식 손난로 보조배터리", "category": "겨울·방한", "badge": "3초발열·분리형", "price_label": "2만 원대", "affiliate_url": "", "thumbnail": "assets/thumb_001.jpg", "keywords": ["손난로", "충전식손난로", "보조배터리", "자석분리형", "겨울방한", "출퇴근"], "created_at": "2026-11-20", "summary_bullets": ["자석 결합 및 2개 분리 구조로 양손 동시 사용 가능", "전원 3초 양면 고속 발열 및 3단계 LED 온도 표시", "비수기 스마트폰 USB-C 보조배터리 겸용 설계"]}]}</script>
+  <script src="app.js"></script>
+</body>
+</html>
