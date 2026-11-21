@@ -3,6 +3,51 @@
   "ftc_disclosure": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.",
   "items": [
     {
+      "code": "005",
+      "title": "미테르 블루투스 리모컨 RM1 이북 쇼츠 셔터 (그린)",
+      "category": "AI·IT가젯",
+      "badge": "27g·3대페어링",
+      "price_label": "2만원대 (상세페이지 참조)",
+      "affiliate_url": "https://link.coupang.com/a/iQAKYOuHS0",
+      "thumbnail": "assets/thumb_005.jpg",
+      "keywords": [
+        "이북리모컨",
+        "쇼츠리모컨",
+        "블루투스리모컨",
+        "웹툰리모컨",
+        "미테르RM1",
+        "전자책리모컨"
+      ],
+      "created_at": "2026-11-20",
+      "summary_bullets": [
+        "36x102x10mm 초슬림 크기와 27g 무게로 겨울철 이불 밖으로 손 꺼내지 않고 한 손 원격 조작",
+        "전자책 페이지 넘김·화면 리프레시·조명 밝기 조절부터 유튜브 쇼츠·릴스·카메라 셔터까지 지원",
+        "블루투스 5.0(10m) 기반 최대 3대 기기 멀티 페어링(1~3번 버튼 전환) 및 스트랩홀 탑재",
+        "180mAh 내장 배터리 2시간 충전 시 최대 90시간 연속 사용 (USB-C 정격 5V/200mA)"
+      ],
+      "verified_specs": [
+        "모델명 MIT_BTR02 · KC 인증 R-R-MIT-BTR02-2024KR · 36x102x10mm · 27g",
+        "블루투스 5.0(최대 10m) · 최대 3대 멀티 페어링 · BT/2.4GHz 전환 및 30분 슬립모드",
+        "상단 원형 패드(+/-/좌/우/재생) + 하단 홈·화면 리프레시·이전메뉴 + 측면 조명 밝기 버튼",
+        "180mAh 배터리(2시간 완충·90시간 연속 사용) · USB-C 포트(DC 5V/200mA 일반 충전기 전용)"
+      ],
+      "detail_highlights": [],
+      "recommended_for": [],
+      "review_rating": 4.7,
+      "review_count": 437,
+      "review_pros": [
+        "437개 구매평(평점 4.7, 최고 85%) 기준 27g 초경량 휴대성과 3대 기기 멀티 페어링 전환 만족도가 높다는 평가",
+        "이북리더기 전용 화면 리프레시·조명 밝기 버튼이 별도 분리돼 침대 거치대 독서 환경에서 편리하다는 의견",
+        "판매자로켓 익일 도착 보장 지원과 1회 완충 최대 90시간에 달하는 긴 배터리 지속 시간 호평"
+      ],
+      "review_cons": [
+        "아이폰(iOS)은 AssistiveTouch 설정이 필요하며 일부 앱·숏츠나 구형 리더기(킨들·그랑데 등) 호환 제한 및 5V 일반 충전기 전용(고속충전기 불가) 주의"
+      ],
+      "source_product_url": "https://www.coupang.com/vp/products/7912984994?itemId=21718163794&vendorItemId=94323014850",
+      "hands_on_tested": false,
+      "voice_profile": "tech_gadget"
+    },
+    {
       "code": "004",
       "title": "BOACE 불멍 벽난로 무드등 초음파 미니 가습기",
       "category": "겨울·방한",
