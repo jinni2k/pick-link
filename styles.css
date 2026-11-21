@@ -212,6 +212,17 @@ body {
   border-radius: 8px !important;
 }
 
+.btn-coordi-link {
+  border-color: rgba(217, 72, 38, 0.45) !important;
+  background: #FDF1ED !important;
+  color: #B9381B !important;
+}
+
+.btn-coordi-link:hover {
+  border-color: #D94826 !important;
+  background: #FCE6DF !important;
+}
+
 .btn,
 .icon-btn {
   display: inline-flex;
