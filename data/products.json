@@ -3,6 +3,51 @@
   "ftc_disclosure": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.",
   "items": [
     {
+      "code": "003",
+      "title": "쿠윈 30만RPM LED 미니 무선 제트건 에어더스터 송풍기",
+      "category": "AI·IT가젯",
+      "badge": "30만RPM·LED",
+      "price_label": "2만원대 (상세페이지 참조)",
+      "affiliate_url": "https://link.coupang.com/a/iQAJLMbKLc",
+      "thumbnail": "assets/thumb_003.jpg",
+      "keywords": [
+        "제트팬",
+        "에어건",
+        "에어더스터",
+        "미니송풍기",
+        "세차물기제거",
+        "쿠윈W20"
+      ],
+      "created_at": "2026-11-20",
+      "summary_bullets": [
+        "최대 300,000 RPM 무브러시 모터 기반 3단계 초고속 제트 바람 출력",
+        "전면 디지털 LED 화면으로 실시간 풍속 단계(1~3단)와 배터리 잔량 확인 가능",
+        "노즐 하단 고휘도 LED 라이트 내장으로 차량 틈새·PC 내부 먼지 식별 용이",
+        "110×140×35mm 포켓 크기 본체와 다용도 노즐 4종·USB-C 케이블·보관 파우치 구성"
+      ],
+      "verified_specs": [
+        "최대 300,000 RPM 무브러시 모터 및 3단계 풍속 조절 (모델명 W20)",
+        "전면 디지털 LED 디스플레이 (풍속 단계 및 배터리 잔량 실시간 표시)",
+        "전면 LED 플래시 조명 내장 및 USB Type-C 충전 (5V/2A 지원)",
+        "110×140×35mm 초소형 포켓 설계 · 다용도 4종 노즐·파우치·케이블 동봉"
+      ],
+      "detail_highlights": [],
+      "recommended_for": [],
+      "review_rating": 4.7,
+      "review_count": 3643,
+      "review_pros": [
+        "3,643개 후기(만족도 92.2%) 기준 포켓 크기에 비해 세차 물기와 PC 먼지를 날리는 풍압이 강력하다는 평가 다수",
+        "배터리 잔량과 풍속을 전면 LED로 바로 확인하고 파우치·4종 노즐 구성이 실용적이라는 의견",
+        "KC 인증(R-R-HUY-T40i / YU10944-22002) 완료 및 로켓 새벽배송 지원으로 접근성 우수"
+      ],
+      "review_cons": [
+        "최고 3단 출력 연속 사용 시 배터리 소모가 빠른 편이며 고풍속 작동음이 커 야간 실내보다 낮 시간·야외 활용 권장"
+      ],
+      "source_product_url": "https://www.coupang.com/vp/products/9019371006?itemId=28712822101&vendorItemId=95947535318",
+      "hands_on_tested": false,
+      "voice_profile": "tech_gadget"
+    },
+    {
       "code": "002",
       "title": "무타공 자동센서 거품 손세정기 디스펜서 (380ml·USB-C·IPX5)",
       "category": "생활·주방",
