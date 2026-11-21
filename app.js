@@ -204,26 +204,25 @@
         const titleHtml = isLiveCoupang
           ? `<a class="card-title-link" href="${escapeHtml(url)}" ${linkAttrs}>${escapeHtml(item.title)}</a>`
           : escapeHtml(item.title);
+        const cleanVolatileReviewText = (v) =>
+          String(v || "")
+            .replace(/\s*\([^)]*(?:평점|별점|후기|구매평|만족)[^)]*\)/g, "")
+            .replace(/^[0-9][0-9,]*\s*(?:여\s*)?(?:개|건)\s*(?:실구매\s*)?(?:후기|구매평|리뷰)(?:\([^)]*\))?\s*기준\s*/g, "")
+            .replace(/\s{2,}/g, " ")
+            .trim();
         const specs = []
           .concat(item.verified_specs || [], item.detail_highlights || [])
           .filter((v, i, arr) => v && arr.indexOf(v) === i);
         const recFor = item.recommended_for || [];
-        const pros = item.review_pros || [];
-        const cons = item.review_cons || [];
-        const hasDetail = Boolean(specs.length || recFor.length || pros.length || cons.length || item.review_rating);
+        const pros = (item.review_pros || []).map(cleanVolatileReviewText).filter(Boolean);
+        const cons = (item.review_cons || []).map(cleanVolatileReviewText).filter(Boolean);
+        const hasDetail = Boolean(specs.length || recFor.length || pros.length || cons.length);
         const isAutoOpen = hasDetail && Boolean(query.trim());
         const chipList = (item.keywords || []).slice(0, 3);
         const specChipsHtml = chipList.length
           ? `<div class="spec-chip-row">${chipList.map((k) => `<span class="spec-chip">${escapeHtml(k)}</span>`).join("")}</div>`
           : "";
         const detailSections = [];
-        if (item.review_rating) {
-          detailSections.push(
-            `<div class="review-badge-row"><span class="code-pill">상품평 ${escapeHtml(item.review_rating)}점</span>` +
-              (item.review_count ? `<span class="badge-pill">${escapeHtml(item.review_count)}개 후기 확인</span>` : "") +
-              `</div>`
-          );
-        }
         if (specs.length) {
           detailSections.push(
             `<div class="detail-section"><h3>주요 특징 및 상세 스펙</h3><ul class="detail-list">` +
@@ -240,7 +239,7 @@
         }
         if (pros.length || cons.length) {
           detailSections.push(
-            `<div class="detail-section"><h3>상품평·구매 전 체크포인트</h3><ul class="detail-list">` +
+            `<div class="detail-section"><h3>핵심 장점·구매 전 확인포인트</h3><ul class="detail-list">` +
               pros.concat(cons).map((p) => `<li>${escapeHtml(p)}</li>`).join("") +
               `</ul></div>`
           );
